@@ -1,9 +1,13 @@
-use std::path::PathBuf;
-
 fn main() {
     println!("cargo:rustc-link-lib=opusenc");
     println!("cargo:rerun-if-changed=wrapper.h");
 
+    #[cfg(feature = "bindgen")]
+    bindgen()
+}
+
+#[cfg(feature = "bindgen")]
+fn bindgen() {
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .clang_args(["-isystem", "/usr/include/opus"])
@@ -12,8 +16,8 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    let out_path = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+    let pwd = std::env::current_dir().unwrap();
     bindings
-        .write_to_file(out_path.join("bindings.rs"))
+        .write_to_file(pwd.join("src").join("bindings.rs"))
         .expect("Couldn't write bindings!");
 }
