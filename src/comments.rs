@@ -108,7 +108,7 @@ impl Comments {
         unsafe {
             crate::ffi::ope_comments_add_picture_from_memory(
                 self.ptr,
-                picture.as_ptr() as *const i8,
+                picture.as_ptr() as _,
                 picture.len(),
                 picture_type as i32,
                 description.map(|d| d.as_ptr()).unwrap_or(std::ptr::null()),
